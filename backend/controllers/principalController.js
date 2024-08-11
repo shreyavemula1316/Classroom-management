@@ -122,3 +122,43 @@ export const updateTimetable = async (req, res) => {
         res.status(500).send('Error updating timetable');
     }
 };
+
+export const assignStudentsToClassroom = async (req, res) => {
+    const { classroomId, studentIds } = req.body;
+
+    try {
+        // Find the classroom
+        const classroom = await Classroom.findById(classroomId);
+        if (!classroom) {
+            return res.status(404).json({ message: 'Classroom not found' });
+        }
+
+        // Find the students
+        const students = await User.find({ _id: { $in: studentIds }, role: 'Student' });
+        if (students.length !== studentIds.length) {
+            return res.status(400).json({ message: 'One or more student IDs are invalid' });
+        }
+
+        // Check if students are already assigned to the classroom
+        const existingStudents = classroom.students.map(student => student.toString());
+        const newStudents = studentIds.filter(id => !existingStudents.includes(id));
+
+        if (newStudents.length === 0) {
+            return res.status(200).json({ message: 'All students are already assigned to this classroom' });
+        }
+
+        // Add new students to the classroom's students array
+        classroom.students.push(...newStudents);
+        await classroom.save();
+
+        // Update student documents to reference the assigned classroom
+        await User.updateMany(
+            { _id: { $in: newStudents } },
+            { $set: { classroom: classroomId } }
+        );
+
+        res.status(200).json({ message: 'Students assigned to classroom successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

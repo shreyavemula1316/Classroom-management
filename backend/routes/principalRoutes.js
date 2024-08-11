@@ -7,13 +7,13 @@ import {
     createClassroom,
     assignClassroomToTeacher,
     getTimetables,
-    updateTimetable
+    updateTimetable,
+    assignStudentsToClassroom
 } from '../controllers/principalController.js';
 import { authenticateToken } from '../middleware/authenticateToken.js';
 import { authorizePrincipal } from '../middleware/autherizePrincipal.js';
 
 const router = express.Router();
-
 
 router.get('/teachers', authenticateToken, authorizePrincipal, getTeachers);
 router.get('/students', authenticateToken, authorizePrincipal, getStudents);
@@ -23,5 +23,6 @@ router.post('/classrooms', authenticateToken, authorizePrincipal, createClassroo
 router.post('/assign-classroom', authenticateToken, authorizePrincipal, assignClassroomToTeacher);
 router.get('/timetables', authenticateToken, authorizePrincipal, getTimetables);
 router.put('/timetables/:id', authenticateToken, authorizePrincipal, updateTimetable);
+router.post('/assign-students-to-classroom', authenticateToken, authorizePrincipal, assignStudentsToClassroom);
 
 export default router;

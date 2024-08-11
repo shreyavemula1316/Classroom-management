@@ -20,7 +20,12 @@ const timetableSchema = new mongoose.Schema({
     },
     day: {
         type: String,
-        required: true // e.g., "Monday"
+        required: true
+    },
+    teacher: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true // Ensure this is set to true if it's a required field
     }
 });
 

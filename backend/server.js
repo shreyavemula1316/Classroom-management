@@ -5,11 +5,13 @@ import userRoutes from './routes/userRoutes.js';
 import principalRoutes from './routes/principalRoutes.js';
 import teacherRoutes from './routes/teacherRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
+import cors from 'cors';
 
 
 
 const app = express();
 dotenv.config();
+app.use(cors());
 
 
 app.use(express.json());
